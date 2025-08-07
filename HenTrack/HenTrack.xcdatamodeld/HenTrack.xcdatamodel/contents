@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24C2101" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="EggEvent" representedClassName="EggEvent" syncable="YES">
+        <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="hen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Hen" inverseName="eggEvents" inverseEntity="Hen"/>
+    </entity>
+    <entity name="Hen" representedClassName="Hen" syncable="YES">
+        <attribute name="birthDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="breed" attributeType="String"/>
+        <attribute name="colorTag" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="mood" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="photoData" optional="YES" attributeType="Binary"/>
+        <attribute name="status" attributeType="String"/>
+        <relationship name="eggEvents" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EggEvent" inverseName="hen" inverseEntity="EggEvent"/>
+        <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NoteEvent" inverseName="hen" inverseEntity="NoteEvent"/>
+        <relationship name="photos" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="hen" inverseEntity="Photo"/>
+        <relationship name="reminders" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Reminder" inverseName="hen" inverseEntity="Reminder"/>
+    </entity>
+    <entity name="NoteEvent" representedClassName="NoteEvent" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <relationship name="hen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Hen" inverseName="notes" inverseEntity="Hen"/>
+    </entity>
+    <entity name="Photo" representedClassName="Photo" syncable="YES">
+        <attribute name="caption" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <relationship name="hen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Hen" inverseName="photos" inverseEntity="Hen"/>
+    </entity>
+    <entity name="Reminder" representedClassName="Reminder" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="hen" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Hen" inverseName="reminders" inverseEntity="Hen"/>
+    </entity>
+</model>
