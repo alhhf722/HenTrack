@@ -26,11 +26,67 @@ workflows:
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
           agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
 
-      - name: Build ipa for distribution
+      - name: Build ipa for distribution (with full xcodebuild logs)
         script: |
-          xcode-project build-ipa \
-            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME"
+          set -euo pipefail
+          cd "$CM_BUILD_DIR"
+
+          LOG_DIR="/tmp/xcodebuild_logs"
+          mkdir -p "$LOG_DIR"
+
+          ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/${XCODE_SCHEME}_$(date +%s).xcarchive"
+          EXPORT_PATH="$CM_BUILD_DIR/build/ios/ipa"
+          mkdir -p "$EXPORT_PATH"
+
+          echo "=== START: xcodebuild archive ==="
+          # Archive (captures full output into archive.log and prints to console)
+          xcodebuild -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -archivePath "$ARCHIVE_PATH" \
+            archive \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" 2>&1 | tee "$LOG_DIR/archive.log"
+
+          # Проверка успешности xcodebuild (на exit code в пайпе)
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+            echo "Archive failed. See $LOG_DIR/archive.log"
+            exit 65
+          fi
+          echo "=== OK: archive complete ==="
+
+          # Создаём exportOptions.plist для экспорта .ipa (app-store)
+          cat > "$CM_BUILD_DIR/exportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+
+          echo "=== START: xcodebuild -exportArchive ==="
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist "$CM_BUILD_DIR/exportOptions.plist" 2>&1 | tee "$LOG_DIR/export.log"
+
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+            echo "Export failed. See $LOG_DIR/export.log"
+            exit 65
+          fi
+          echo "=== OK: export complete ==="
+
+          echo "IPA location (if any):"
+          ls -la "$EXPORT_PATH" || true
 
     artifacts:
       - build/ios/ipa/*.ipa
