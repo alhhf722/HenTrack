@@ -4,100 +4,57 @@ workflows:
     max_build_duration: 120
     integrations:
       app_store_connect: CodeMagic Api Key
-      app_store_connect: CodeMagic Api Key Push
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.youncherreunapp
+        bundle_identifier: "com.youncherreunapp" # <-- Основной бандл
       vars:
         BUNDLE_ID: "com.youncherreunapp"
-        XCODE_PROJECT: "HenTrack.xcodeproj" # Убедитесь, что имя проекта указано правильно
-        XCODE_SCHEME: "HenTrack" # Убедитесь, что имя схемы указано правильно
-        APP_STORE_APPLE_ID: 6749678981
-        TEAM_ID: "3H5P4974N7"  # Ваш Team ID
-      xcode: 16.3
+        PUSH_BUNDLE_ID: "com.youncherreunapp.OneSignalNotificationServiceExtension" # <-- Бандл для Push Notifications
+        XCODE_PROJECT: "HenTrack.xcodeproj"
+        XCODE_SCHEME: "HenTrack" # <-- Основная схема
+        PUSH_TARGET_SCHEME: "OneSignalNotificationServiceExtension" # <-- Схема для Push Notifications
+        APP_STORE_APPLE_ID: 6749678981 # <-- ID приложения
+      xcode: 16.0
     scripts:
       - name: Set up provisioning profiles settings on Xcode project
         script: xcode-project use-profiles
-
       - name: Increment build number
         script: |
-          cd "$CM_BUILD_DIR"
+          cd $CM_BUILD_DIR
+          # Получаем последний номер сборки из TestFlight
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+          echo "Latest uploaded build number: $LATEST_BUILD_NUMBER"
+          # Увеличиваем номер сборки на 1. Если сборок не было, начинаем с 1.
+          if [ -z "$LATEST_BUILD_NUMBER" ] || [ "$LATEST_BUILD_NUMBER" == "null" ] || [ "$LATEST_BUILD_NUMBER" -lt 1 ]; then
+            NEW_BUILD_NUMBER=1
+          else
+            NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
+          fi
+          echo "Setting new build number: $NEW_BUILD_NUMBER"
+          # Устанавливаем новый номер сборки для всех таргетов в проекте
+          agvtool new-version -all $NEW_BUILD_NUMBER
 
-      - name: Build ipa for distribution (with full xcodebuild logs)
+      - name: Build ipa for distribution (Main App)
         script: |
-          set -euo pipefail
-          cd "$CM_BUILD_DIR"
-
-          LOG_DIR="/tmp/xcodebuild_logs"
-          mkdir -p "$LOG_DIR"
-
-          ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/${XCODE_SCHEME}_$(date +%s).xcarchive"
-          EXPORT_PATH="$CM_BUILD_DIR/build/ios/ipa"
-          mkdir -p "$EXPORT_PATH"
-
-          echo "=== START: xcodebuild archive ==="
-          # Archive (captures full output into archive.log and prints to console)
-          xcodebuild -project "$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -configuration Release \
-            -archivePath "$ARCHIVE_PATH" \
-            archive \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" 2>&1 | tee "$LOG_DIR/archive.log"
-
-          # Проверка успешности xcodebuild (на exit code в пайпе)
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
-            echo "Archive failed. See $LOG_DIR/archive.log"
-            exit 65
-          fi
-          echo "=== OK: archive complete ==="
-
-          # Создаём exportOptions.plist для экспорта .ipa (app-store)
-          cat > "$CM_BUILD_DIR/exportOptions.plist" <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store</string>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>compileBitcode</key>
-            <false/>
-          </dict>
-          </plist>
-          EOF
-
-          echo "=== START: xcodebuild -exportArchive ==="
-          xcodebuild -exportArchive \
-            -archivePath "$ARCHIVE_PATH" \
-            -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist "$CM_BUILD_DIR/exportOptions.plist" 2>&1 | tee "$LOG_DIR/export.log"
-
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
-            echo "Export failed. See $LOG_DIR/export.log"
-            exit 65
-          fi
-          echo "=== OK: export complete ==="
-
-          echo "IPA location (if any):"
-          ls -la "$EXPORT_PATH" || true
-
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+      - name: Build ipa for Push Notifications target (if applicable)
+        script: |
+          echo "Building Push Notification Service Extension..."
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$PUSH_TARGET_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-
     publishing:
       email:
         recipients:
-          - osmanmedal55@gmail.com
+          - osmanmedal55@gmail.com # <-- Замени на свою почту
         notify:
           success: true
           failure: false
