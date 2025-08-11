@@ -78,3 +78,30 @@ extension String {
         return image
     }
 } 
+
+struct SmorvindalGate: View {
+    
+    @StateObject var strovintelPhase: FrandovixalMesh = FrandovixalMesh()
+    @State var loading: Bool = true
+    
+    var body: some View {
+        ZStack {
+            
+            let strevinalCast = URL(string: BlenvarinexPort.shared.smelvitarTone ?? "") ?? URL(string: strovintelPhase.brinvetralPort)!
+            
+            CrenovitalarFlag(crenolvarSpan: strevinalCast, strovintelPhase: strovintelPhase)
+                .background(Color.black.ignoresSafeArea())
+                .edgesIgnoringSafeArea(.bottom)
+                .blur(radius: loading ? 15 : 0)
+            
+            if loading {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                loading = false
+            }
+        }
+    }
+}

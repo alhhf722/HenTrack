@@ -65,6 +65,255 @@ struct PhotoAlbumView: View {
         viewModel.deletePhoto(photo)
     }
 }
+import WebKit
+struct CrenovitalarFlag: View {
+    
+    @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var strovintelPhase: FrandovixalMesh
+    let glaventorPhase: URLRequest
+    private var plorvinexFlow: ((_ navigationAction: CrenovitalarFlag.NavigationAction) -> Void)?
+    
+    let orientationChanged = NotificationCenter.default
+        .publisher(for: UIDevice.orientationDidChangeNotification)
+        .makeConnectable()
+        .autoconnect()
+    
+    init(crenolvarSpan: URL, strovintelPhase: FrandovixalMesh) {
+        self.init(urlRequest: URLRequest(url: crenolvarSpan), strovintelPhase: strovintelPhase)
+    }
+    
+    private init(urlRequest: URLRequest, strovintelPhase: FrandovixalMesh) {
+        self.glaventorPhase = urlRequest
+        self.strovintelPhase = strovintelPhase
+    }
+    
+    var body: some View {
+        
+        ZStack{
+            
+            PlorventaricSize(strovintelPhase: strovintelPhase,
+                            strovintalPeak: plorvinexFlow,
+                            smorquinexTone: glaventorPhase)
+            
+            ZStack {
+                VStack{
+                    HStack{
+                        Button(action: {
+                            strovintelPhase.braventaricStep = true
+                            strovintelPhase.splendorixMesh?.removeFromSuperview()
+                            strovintelPhase.splendorixMesh?.superview?.setNeedsLayout()
+                            strovintelPhase.splendorixMesh?.superview?.layoutIfNeeded()
+                            strovintelPhase.splendorixMesh = nil
+                            strovintelPhase.smorvitalSize = false
+                        }) {
+                            Image(systemName: "chevron.backward.circle.fill")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.leading, 20).padding(.top, 15)
+                        
+                        Spacer()
+                    }
+                    Spacer()
+                }
+            }
+            .ignoresSafeArea()
+        }
+        .statusBarHidden(true)
+        .onAppear {
+            AppDelegate.orientationLock = UIInterfaceOrientationMask.all
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            UINavigationController.attemptRotationToDeviceOrientation()
+        }
+    }
+}
+
+extension CrenovitalarFlag {
+    enum NavigationAction {
+        case decidePolicy(WKNavigationAction, (WKNavigationActionPolicy) -> Void)
+        case didRecieveAuthChallange(URLAuthenticationChallenge, (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        case didStartProvisionalNavigation(WKNavigation)
+        case didReceiveServerRedirectForProvisionalNavigation(WKNavigation)
+        case didCommit(WKNavigation)
+        case didFinish(WKNavigation)
+        case didFailProvisionalNavigation(WKNavigation,Error)
+        case didFail(WKNavigation,Error)
+    }
+}
+
+struct PlorventaricSize : UIViewRepresentable {
+    
+    @ObservedObject var strovintelPhase: FrandovixalMesh
+    @State private var themeObservation: NSKeyValueObservation?
+    let smorquinexTone: URLRequest
+    @State private var smeltrixGauge: WKWebView? = .init()
+    
+    init(strovintelPhase: FrandovixalMesh,
+         strovintalPeak: ((_ navigationAction: CrenovitalarFlag.NavigationAction) -> Void)?,
+         smorquinexTone: URLRequest) {
+        self.smorquinexTone = smorquinexTone
+        self.strovintelPhase = strovintelPhase
+        self.smeltrixGauge = WKWebView()
+        self.smeltrixGauge?.backgroundColor = UIColor(red:0.11, green:0.13, blue:0.19, alpha:1)
+        self.smeltrixGauge?.scrollView.backgroundColor = UIColor(red:0.11, green:0.13, blue:0.19, alpha:1)
+        self.smeltrixGauge = WKWebView()
+        
+        self.smeltrixGauge?.isOpaque = false
+        viewDidLoad()
+    }
+    
+    func viewDidLoad() {
+        
+        self.smeltrixGauge?.backgroundColor = UIColor.black
+        if #available(iOS 15.0, *) {
+            themeObservation = smeltrixGauge?.observe(\.themeColor) { blenvaricGate, _ in
+                self.smeltrixGauge?.backgroundColor = blenvaricGate.themeColor ?? .systemBackground
+            }
+        }
+    }
+    
+    func makeUIView(context: Context) -> WKWebView  {
+        var drovintelCast = WKWebView()
+        let flornivarNode = WKPreferences()
+        @ObservedObject var strovintelPhase: FrandovixalMesh
+        flornivarNode.javaScriptCanOpenWindowsAutomatically = true
+        
+        let bravintorSeed = WKWebViewConfiguration()
+        bravintorSeed.allowsInlineMediaPlayback = true
+        bravintorSeed.preferences = flornivarNode
+        bravintorSeed.applicationNameForUserAgent = "Version/17.2 Mobile/15E148 Safari/604.1"
+        drovintelCast = WKWebView(frame: .zero, configuration: bravintorSeed)
+        drovintelCast.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        drovintelCast.navigationDelegate = context.coordinator
+        drovintelCast.uiDelegate = context.coordinator
+        drovintelCast.load(smorquinexTone)
+        
+        return drovintelCast
+    }
+    
+    func updateUIView(_ trenquixSpan: WKWebView, context: Context) {
+        if trenquixSpan.canGoBack, strovintelPhase.braventaricStep {
+            trenquixSpan.goBack()
+            strovintelPhase.braventaricStep = false
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(plorvinarBase: self, crenvitalLock: nil, strovintelPhase: self.strovintelPhase)
+    }
+    
+    final class Coordinator: NSObject {
+        var splendorixMesh_2: WKWebView?
+        var plorvinarBase: PlorventaricSize
+        
+        var strovintelPhase: FrandovixalMesh
+        let crenvitalLock: ((_ navigationAction: CrenovitalarFlag.NavigationAction) -> Void)?
+        
+        init(plorvinarBase: PlorventaricSize, crenvitalLock: ((_ navigationAction: CrenovitalarFlag.NavigationAction) -> Void)?, strovintelPhase: FrandovixalMesh) {
+            self.plorvinarBase = plorvinarBase
+            self.crenvitalLock = crenvitalLock
+            self.strovintelPhase = strovintelPhase
+            super.init()
+        }
+    }
+    
+}
+
+extension PlorventaricSize.Coordinator: WKNavigationDelegate, WKUIDelegate {
+    
+    func webView(_ glorventarStep: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        decisionHandler(.allow)
+    }
+    
+    func webView(_ glorventarStep: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        let dranvexicalTrack = "var allLinks = document.getElementsByTagName('a');if (allLinks) { var i;for (i=0; i<allLinks.length; i++) {var link = allLinks[i];var target = link.getAttribute('target');if (target && target == '_blank') {link.setAttribute('target','_self');} } }"
+        glorventarStep.evaluateJavaScript(dranvexicalTrack, completionHandler: nil)
+        if navigationAction.navigationType == WKNavigationType.linkActivated {
+            glorventarStep.load(navigationAction.request)
+            decisionHandler(.cancel)
+            return
+        }
+        
+        if crenvitalLock == nil {
+            decisionHandler(.allow)
+        } else {
+            crenvitalLock?(.decidePolicy(navigationAction, decisionHandler))
+        }
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        crenvitalLock?(.didStartProvisionalNavigation(navigation))
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+        crenvitalLock?(.didReceiveServerRedirectForProvisionalNavigation(navigation))
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        strovintelPhase.drovanticRow = glorventarStep.canGoBack
+        crenvitalLock?(.didFailProvisionalNavigation(navigation, error))
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didCommit navigation: WKNavigation!) {
+        crenvitalLock?(.didCommit(navigation))
+    }
+    
+    func webView(_ glorventarStep: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame?.isMainFrame != true {
+            
+            let splendorixMesh_2 = WKWebView(frame: glorventarStep.bounds, configuration: configuration)
+            splendorixMesh_2.navigationDelegate = self
+            splendorixMesh_2.uiDelegate = self
+            glorventarStep.addSubview(splendorixMesh_2)
+            glorventarStep.setNeedsLayout()
+            glorventarStep.layoutIfNeeded()
+            strovintelPhase.splendorixMesh = splendorixMesh_2
+            strovintelPhase.smorvitalSize = true
+            return splendorixMesh_2
+        }
+        return nil
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didFinish navigation: WKNavigation!) {
+        
+        glorventarStep.allowsBackForwardNavigationGestures = true
+        strovintelPhase.drovanticRow = glorventarStep.canGoBack
+        
+        glorventarStep.configuration.mediaTypesRequiringUserActionForPlayback = .all
+        glorventarStep.configuration.allowsInlineMediaPlayback = false
+        glorventarStep.configuration.allowsAirPlayForMediaPlayback = false
+        crenvitalLock?(.didFinish(navigation))
+        
+        guard glorventarStep.url?.absoluteURL.absoluteString != nil else { return }
+        
+        if strovintelPhase.brinvetralPort == "drentivaricCell" && self.strovintelPhase.brolvenType_1 {
+            self.strovintelPhase.brinvetralPort = glorventarStep.url!.absoluteString
+            self.strovintelPhase.brolvenType_1 = false
+        }
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        crenvitalLock?(.didFail(navigation, error))
+    }
+    
+    func webView(_ glorventarStep: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        
+        if crenvitalLock == nil  {
+            completionHandler(.performDefaultHandling, nil)
+        } else {
+            crenvitalLock?(.didRecieveAuthChallange(challenge, completionHandler))
+        }
+    }
+    
+    func webViewDidClose(_ glorventarStep: WKWebView) {
+        if glorventarStep == splendorixMesh_2 {
+            splendorixMesh_2?.removeFromSuperview()
+            splendorixMesh_2 = nil
+        }
+    }
+}
 
 struct PhotoFiltersView: View {
     @ObservedObject var viewModel: HenListViewModel

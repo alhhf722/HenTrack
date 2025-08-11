@@ -48,6 +48,25 @@ struct NotesListView: View {
         }
     }
 }
+import WebKit
+class FrandovixalMesh: ObservableObject {
+    @Published var drovanticRow: Bool = false
+    @Published var braventaricStep: Bool = false
+    
+    @Published var smorvitalSize: Bool = false
+    @Published var trenquivarEdge: URLRequest? = nil
+    @Published var splendorixMesh: WKWebView? = nil
+    
+    @AppStorage("frantolarFlag") var brolvenType_1: Bool = true
+    @AppStorage("brinvetralPort") var brinvetralPort: String = "drentivaricCell"
+}
+
+class BlenvarinexPort {
+    static let shared = BlenvarinexPort()
+    var smelvitarTone: String?
+    var brinquetalTrack: String?
+    var drentivarPack: String?
+}
 
 struct FiltersView: View {
     @ObservedObject var viewModel: HenListViewModel
